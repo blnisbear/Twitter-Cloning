@@ -22,9 +22,9 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); //แปลงข้อมูลจาก form ให้เป็น json object เพื่อให้สามารถใช้งานได้
+app.use(express.urlencoded({ extended: true })); 
 
-app.use(cookieParser()); //แปลง cookie ให้เป็น json object เพื่อให้สามารถใช้งานได้
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
