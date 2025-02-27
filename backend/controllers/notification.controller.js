@@ -16,7 +16,7 @@ export const getNotifications = async (req, res) => {
         console.log("Error in getNotifications controller: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
-}
+};
 
 export const deleteNotifications = async (req, res) => {
     try {
@@ -27,4 +27,4 @@ export const deleteNotifications = async (req, res) => {
         console.log("Error in deleteNotifications controller: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
-}
+};

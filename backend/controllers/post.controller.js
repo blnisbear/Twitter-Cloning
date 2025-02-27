@@ -17,8 +17,8 @@ export const createPost = async (req, res) => {
         }
 
         if(img) { 
-            const uploadResponse = await cloudinary.uploader.upload(img);
-            img = uploadResponse.secure_url; 
+            const uploadedResponse = await cloudinary.uploader.upload(img);
+            img = uploadedResponse.secure_url; 
         }
 
         const newPost = new Post({ 
@@ -34,7 +34,6 @@ export const createPost = async (req, res) => {
         console.log("Error in createPost controller", error);
     }
 };
-
 export const deletePost = async (req, res) => {
     try {
         const  post = await Post.findById(req.params.id); 
@@ -59,7 +58,6 @@ export const deletePost = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-
 export const commentOnPost = async (req, res) => {
     try {
         const { text } = req.body; 
@@ -85,7 +83,6 @@ export const commentOnPost = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-
 export const likeUnlikePost = async (req, res) => {
     try {
         const userId = req.user._id; 
@@ -98,11 +95,14 @@ export const likeUnlikePost = async (req, res) => {
         }
 
         const userLikedPost = post.likes.includes(userId);
+
         if(userLikedPost) {
             //Unlike Post
             await Post.updateOne({_id: postId}, {$pull: {likes: userId}}); 
             await User.updateOne({_id: userId}, {$pull: {likedPosts: postId}});
-            res.status(200).json({ message: "Post unliked successfully" }); 
+
+            const updatedLikes = post.likes.filter((id) => id.toString() !== userId.toString());
+            res.status(200).json(updatedLikes); 
         } else { 
             //Like Post
             post.likes.push(userId); 
@@ -117,7 +117,8 @@ export const likeUnlikePost = async (req, res) => {
 
             await notification.save(); 
 
-            res.status(200).json({ message: "Post liked successfully" });
+            const updatedLikes = post.likes;
+            res.status(200).json(updatedLikes);
         }
 
     }   catch(error) {
@@ -125,7 +126,6 @@ export const likeUnlikePost = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-
 export const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find() 
@@ -149,7 +149,6 @@ export const getAllPosts = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-
 export const getLikedPosts = async (req, res) => {
     const userId = req.params.id;
 
@@ -174,7 +173,6 @@ export const getLikedPosts = async (req, res) => {
         res.status(500).json({error: "Internal server error"})
     }
 }
-
 export const getFollowingPosts = async (req, res) => {
     try {
         const userId = req.user._id; 
@@ -199,7 +197,6 @@ export const getFollowingPosts = async (req, res) => {
         res.status(500).json({ error: "Internal server error "});
     }
 }
-
 export const getUserPosts = async (req, res) => {
     try {
         const { username } = req.params;
